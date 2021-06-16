@@ -1,3 +1,11 @@
+This is fork of [netdata-java-orchestrator](https://github.com/simonnagl/netdata-java-orchestrator) from simonnagl.
+It contains following changes:
+- added support to connect JMX bean server on Wildfly 10
+- added support for reconnecting to JMX server
+- added support for displaying relative percentage dimensions (ie. memoryUsed/memoryTotal)
+
+Right below starts original README.md
+
 # Netdata Java Orchestrator
 
 [![Build Status](https://travis-ci.org/simonnagl/netdata-java-orchestrator.svg?branch=master)](https://travis-ci.org/simonnagl/netdata-java-orchestrator.svg?branch=master)
