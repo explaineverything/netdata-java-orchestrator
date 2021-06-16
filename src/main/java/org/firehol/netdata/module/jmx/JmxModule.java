@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+// Modified by piotr.walkiewicz@explaineverything.com at 06-16-2021
+
 package org.firehol.netdata.module.jmx;
 
 import java.io.IOException;
@@ -191,7 +193,7 @@ public class JmxModule implements Module {
 				String runtimeName = mBeanCollector.getRuntimeName();
 				allRuntimeName.add(runtimeName);
 			} catch (JmxMBeanServerQueryException e) {
-				log.warning(LoggingUtils.getMessageSupplier("Could not find runtimeName", e));
+				log.warning(LoggingUtils.getMessageSupplier("Could not find runtimeName", Modified by piotr.walkiewicz@explaineverything.com at 06-16-2021e));
 			}
 		}
 		return allRuntimeName;
