@@ -14,6 +14,7 @@ import java.util.Collection;
 import javax.management.*;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeType;
+import javax.xml.ws.Holder;
 
 import org.firehol.netdata.model.Dimension;
 import org.firehol.netdata.module.jmx.exception.JmxMBeanServerQueryException;
@@ -38,14 +39,15 @@ public class MBeanQueryTest {
 		final String testAttribute = "Attribute";
 		when(mBeanServer.getAttribute(ObjectName.WILDCARD, testAttribute)).thenReturn(1234);
 
-		final MBeanQuery mBeanQuery = MBeanQuery.newInstance(mBeanServer, ObjectName.WILDCARD, testAttribute);
+		final MBeanQuery mBeanQuery = MBeanQuery.newInstance(new Holder<>(mBeanServer), ObjectName.WILDCARD,
+				testAttribute);
 
 		assertInstanceOf(MBeanSimpleQuery.class, mBeanQuery);
 
 		verify(mBeanServer).getAttribute(ObjectName.WILDCARD, testAttribute);
 		assertEquals(testAttribute, mBeanQuery.getAttribute());
 		assertEquals(ObjectName.WILDCARD, mBeanQuery.getName());
-		assertEquals(mBeanServer, mBeanQuery.getMBeanServer());
+		assertEquals(mBeanServer, mBeanQuery.getMBeanServer().value);
 	}
 
 	@Test
@@ -53,7 +55,8 @@ public class MBeanQueryTest {
 			ReflectionException, InstanceNotFoundException, IOException {
 		when(mBeanServer.getAttribute(ObjectName.WILDCARD, "Attribute")).thenReturn(1234L);
 
-		final MBeanQuery mBeanQuery = MBeanQuery.newInstance(mBeanServer, ObjectName.WILDCARD, "Attribute");
+		final MBeanQuery mBeanQuery = MBeanQuery.newInstance(new Holder<>(mBeanServer), ObjectName.WILDCARD,
+				"Attribute");
 
 		assertInstanceOf(MBeanSimpleQuery.class, mBeanQuery);
 	}
@@ -63,7 +66,8 @@ public class MBeanQueryTest {
 			InstanceNotFoundException, IOException, JmxMBeanServerQueryException {
 		when(mBeanServer.getAttribute(ObjectName.WILDCARD, "Attribute")).thenReturn(12.34);
 
-		final MBeanQuery mBeanQuery = MBeanQuery.newInstance(mBeanServer, ObjectName.WILDCARD, "Attribute");
+		final MBeanQuery mBeanQuery = MBeanQuery.newInstance(new Holder<>(mBeanServer), ObjectName.WILDCARD,
+				"Attribute");
 
 		assertInstanceOf(MBeanSimpleQuery.class, mBeanQuery);
 	}
@@ -73,7 +77,8 @@ public class MBeanQueryTest {
 			MBeanException, ReflectionException, InstanceNotFoundException, IOException {
 		when(mBeanServer.getAttribute(ObjectName.WILDCARD, "Attribute")).thenReturn(buildCompositeData());
 
-		final MBeanQuery mBeanQuery = MBeanQuery.newInstance(mBeanServer, ObjectName.WILDCARD, "Attribute.compkey");
+		final MBeanQuery mBeanQuery = MBeanQuery.newInstance(new Holder<>(mBeanServer), ObjectName.WILDCARD,
+				"Attribute.compkey");
 
 		assertInstanceOf(MBeanCompositeDataQuery.class, mBeanQuery);
 	}
@@ -143,7 +148,7 @@ public class MBeanQueryTest {
 		final ObjectName name = new ObjectName("*:type=MBean");
 		when(mBeanServer.getAttribute(name, "MBeanAttributeName")).thenReturn(queryResult);
 
-		final MBeanQuery query = MBeanQuery.newInstance(mBeanServer, name, "MBeanAttributeName");
+		final MBeanQuery query = MBeanQuery.newInstance(new Holder<>(mBeanServer), name, "MBeanAttributeName");
 		final Dimension dim1 = new Dimension();
 		dim1.setName("Dimension 1");
 		query.getDimensions().add(dim1);
@@ -168,7 +173,7 @@ public class MBeanQueryTest {
 	public void testAddDimension() throws JmxMBeanServerQueryException, AttributeNotFoundException, MBeanException,
 			ReflectionException, InstanceNotFoundException, IOException {
 		when(mBeanServer.getAttribute(ObjectName.WILDCARD, "attribute")).thenReturn(1234L);
-		final MBeanQuery query = MBeanQuery.newInstance(mBeanServer, ObjectName.WILDCARD, "attribute");
+		final MBeanQuery query = MBeanQuery.newInstance(new Holder<>(mBeanServer), ObjectName.WILDCARD, "attribute");
 		final Dimension dimension = new Dimension();
 
 		query.addDimension(dimension, "attribute");
@@ -180,7 +185,7 @@ public class MBeanQueryTest {
 	public void testAddDimensionAttributeNotMatch() throws JmxMBeanServerQueryException, AttributeNotFoundException,
 			MBeanException, ReflectionException, InstanceNotFoundException, IOException {
 		when(mBeanServer.getAttribute(ObjectName.WILDCARD, "attribute")).thenReturn(1234L);
-		final MBeanQuery query = MBeanQuery.newInstance(mBeanServer, ObjectName.WILDCARD, "attribute");
+		final MBeanQuery query = MBeanQuery.newInstance(new Holder<>(mBeanServer), ObjectName.WILDCARD, "attribute");
 		final Dimension dimension = new Dimension();
 
 		query.addDimension(dimension, "no match");
@@ -190,7 +195,7 @@ public class MBeanQueryTest {
 	public void testAddDimensionAttributeNull() throws JmxMBeanServerQueryException, AttributeNotFoundException,
 			MBeanException, ReflectionException, InstanceNotFoundException, IOException {
 		when(mBeanServer.getAttribute(ObjectName.WILDCARD, "attribute")).thenReturn(1234L);
-		final MBeanQuery query = MBeanQuery.newInstance(mBeanServer, ObjectName.WILDCARD, "attribute");
+		final MBeanQuery query = MBeanQuery.newInstance(new Holder<>(mBeanServer), ObjectName.WILDCARD, "attribute");
 		final Dimension dimension = new Dimension();
 
 		query.addDimension(dimension, null);
@@ -200,7 +205,7 @@ public class MBeanQueryTest {
 	public void testAddDimensionCompositeData() throws JmxMBeanServerQueryException, AttributeNotFoundException,
 			MBeanException, ReflectionException, InstanceNotFoundException, IOException {
 		when(mBeanServer.getAttribute(ObjectName.WILDCARD, "attribute")).thenReturn(buildCompositeData());
-		final MBeanQuery query = MBeanQuery.newInstance(mBeanServer, ObjectName.WILDCARD, "attribute");
+		final MBeanQuery query = MBeanQuery.newInstance(new Holder<>(mBeanServer), ObjectName.WILDCARD, "attribute");
 		final Dimension dimension = new Dimension();
 
 		query.addDimension(dimension, "attribute.key");

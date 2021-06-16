@@ -15,6 +15,12 @@ public final class MBeanServerUtils {
 
 	public static Object getAttribute(MBeanServerConnection mBeanServer, ObjectName name, String attribute)
 			throws JmxMBeanServerQueryException {
+
+		if (mBeanServer == null) {
+			throw new JmxMBeanServerQueryException(
+					"Could not query attribute '" + attribute + "' of MBean '" + name + "'");
+		}
+
 		try {
 			return mBeanServer.getAttribute(name, attribute);
 		} catch (AttributeNotFoundException | InstanceNotFoundException | MBeanException | ReflectionException

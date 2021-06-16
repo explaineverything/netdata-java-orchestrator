@@ -33,6 +33,12 @@
 			<version>1.18.8</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- Dependency required to connect to JMX Remote server on Wildfly -->
+		<dependency>
+		    <groupId>org.wildfly</groupId>
+		    <artifactId>wildfly-client-all</artifactId>
+		    <version>10.1.0.Final</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

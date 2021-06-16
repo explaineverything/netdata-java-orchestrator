@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import javax.management.*;
 import javax.management.openmbean.CompositeData;
+import javax.xml.ws.Holder;
 
 import org.firehol.netdata.model.Dimension;
 import org.firehol.netdata.module.jmx.exception.JmxMBeanServerQueryException;
@@ -19,7 +20,8 @@ public class MBeanCompositeDataQueryTest {
 
 	private MBeanServerConnection mBeanServer = mock(MBeanServerConnection.class);
 
-	private final MBeanQuery query = new MBeanCompositeDataQuery(mBeanServer, ObjectName.WILDCARD, "Attribute");
+	private final MBeanQuery query = new MBeanCompositeDataQuery(new Holder<>(mBeanServer), ObjectName.WILDCARD,
+			"Attribute");
 
 	@Test
 	public void testConstructorAttributeWithoutKey() {

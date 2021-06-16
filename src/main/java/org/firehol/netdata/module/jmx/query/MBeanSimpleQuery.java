@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
+import javax.xml.ws.Holder;
 
 import org.firehol.netdata.model.Dimension;
 import org.firehol.netdata.module.jmx.exception.JmxMBeanServerQueryException;
@@ -22,7 +23,7 @@ public class MBeanSimpleQuery extends MBeanQuery {
 
 	private final MBeanValueStore valueStore;
 
-	MBeanSimpleQuery(final MBeanServerConnection mBeanServer, final ObjectName name, final String attribute,
+	MBeanSimpleQuery(Holder<MBeanServerConnection> mBeanServer, final ObjectName name, final String attribute,
 			final MBeanValueStore valueStore) {
 		super(mBeanServer, name, attribute);
 		this.valueStore = valueStore;
@@ -54,7 +55,7 @@ public class MBeanSimpleQuery extends MBeanQuery {
 
 	@Override
 	public void query() throws JmxMBeanServerQueryException {
-		Object result = MBeanServerUtils.getAttribute(getMBeanServer(), this.getName(), this.getAttribute());
+		Object result = MBeanServerUtils.getAttribute(getMBeanServer().value, this.getName(), this.getAttribute());
 		valueStore.updateValue(result);
 	}
 }

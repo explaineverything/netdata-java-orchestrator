@@ -107,7 +107,9 @@ public class JmxModule implements Module {
 
 	private void connectToAllServer() {
 		connectToConfiguredServers();
-		connectToLocalProcess();
+		
+		// Disable connection to local process for now
+		// connectToLocalProcess();
 
 		if (configuration.isAutoDetectLocalVirtualMachines()) {
 			connectToLocalServers();
@@ -131,20 +133,7 @@ public class JmxModule implements Module {
 	private MBeanServerCollector buildMBeanServerCollector(JmxServerConfiguration config)
 			throws JmxMBeanServerConnectionException {
 
-		JMXConnector connection = null;
-
-		try {
-			JMXServiceURL url = new JMXServiceURL(config.getServiceUrl());
-			connection = JMXConnectorFactory.connect(url);
-			MBeanServerConnection server = connection.getMBeanServerConnection();
-			return new MBeanServerCollector(config, server, connection);
-		} catch (IOException e) {
-			if (connection != null) {
-				ResourceUtils.close(connection);
-			}
-			throw new JmxMBeanServerConnectionException(
-					"Faild to connect to JMX Server " + config.getServiceUrl() + ".", e);
-		}
+		return MBeanServerCollector.createCollector(config);
 	}
 
 	private void connectToLocalProcess() {

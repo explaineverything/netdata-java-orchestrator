@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
+import javax.xml.ws.Holder;
 
 import org.firehol.netdata.model.Dimension;
 import org.firehol.netdata.module.jmx.exception.JmxMBeanServerQueryException;
@@ -19,7 +20,7 @@ class MBeanCompositeDataQuery extends MBeanQuery {
 
 	private final Map<String, MBeanValueStore> allDimensionByKey = new TreeMap<>();
 
-	MBeanCompositeDataQuery(final MBeanServerConnection mBeanServer, final ObjectName name, final String attribute) {
+	MBeanCompositeDataQuery(Holder<MBeanServerConnection> mBeanServer, final ObjectName name, final String attribute) {
 		super(mBeanServer, name, attribute);
 	}
 
@@ -59,6 +60,7 @@ class MBeanCompositeDataQuery extends MBeanQuery {
 	}
 
 	private CompositeData queryServer() throws JmxMBeanServerQueryException {
-		return (CompositeData) MBeanServerUtils.getAttribute(getMBeanServer(), this.getName(), this.getAttribute());
+		return (CompositeData) MBeanServerUtils.getAttribute(getMBeanServer().value, this.getName(),
+				this.getAttribute());
 	}
 }

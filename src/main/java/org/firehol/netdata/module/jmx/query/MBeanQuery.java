@@ -7,6 +7,7 @@ import java.util.List;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
+import javax.xml.ws.Holder;
 
 import org.firehol.netdata.model.Dimension;
 import org.firehol.netdata.module.jmx.exception.JmxMBeanServerQueryException;
@@ -35,21 +36,28 @@ public abstract class MBeanQuery {
 
 	private final String attribute;
 
-	private final MBeanServerConnection mBeanServer;
+	private final Holder<MBeanServerConnection> mBeanServer;
 
-	MBeanQuery(final MBeanServerConnection mBeanServer, final ObjectName name, final String attribute) {
+	private boolean enabled = false;
+
+	MBeanQuery(Holder<MBeanServerConnection> mBeanServer, final ObjectName name, final String attribute) {
 		this.mBeanServer = mBeanServer;
 		this.name = name;
 		this.attribute = attribute;
 	}
 
-	public static MBeanQuery newInstance(final MBeanServerConnection mBeanServer, final ObjectName mBeanName,
+	public static MBeanQuery newInstance(Holder<MBeanServerConnection> mBeanServer, final ObjectName mBeanName,
 			final String attribute) throws JmxMBeanServerQueryException {
 		final String mBeanAttribute = attribute.split("\\.", 2)[0];
-		final Object queryResult = MBeanServerUtils.getAttribute(mBeanServer, mBeanName, mBeanAttribute);
+		final Object queryResult = MBeanServerUtils.getAttribute(mBeanServer.value, mBeanName, mBeanAttribute);
 
 		if (CompositeData.class.isAssignableFrom(queryResult.getClass())) {
-			return new MBeanCompositeDataQuery(mBeanServer, mBeanName, mBeanAttribute);
+
+			if (attribute.contains("/")) {
+				return new MBeanCompositePercentDataQuery(mBeanServer, mBeanName, mBeanAttribute);
+			} else {
+				return new MBeanCompositeDataQuery(mBeanServer, mBeanName, mBeanAttribute);
+			}
 		}
 
 		return new MBeanSimpleQuery(mBeanServer, mBeanName, mBeanAttribute, MBeanValueStore.newInstance(queryResult));
@@ -60,4 +68,13 @@ public abstract class MBeanQuery {
 	public abstract void query() throws JmxMBeanServerQueryException;
 
 	public abstract List<Dimension> getDimensions();
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
 }
