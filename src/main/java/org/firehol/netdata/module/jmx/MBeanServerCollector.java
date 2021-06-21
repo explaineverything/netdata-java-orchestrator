@@ -66,7 +66,7 @@ public class MBeanServerCollector implements Collector, Closeable {
 	private boolean connected = false;
 
 	private long lastReconnectTimeMs = System.currentTimeMillis();
-	
+
 	private final long RECONNECT_INTERVAL_SEC = 60;
 
 	public static class ConnectionListener implements NotificationListener {
